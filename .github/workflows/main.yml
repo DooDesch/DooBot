@@ -47,4 +47,4 @@ jobs:
                   port: ${{ secrets.PORT }}
                   script: |
                       cd /home/docker-compose/discordbot/DooBot/code
-                      docker-compose build --no-cache && docker-compose up -d
+                      ./init.sh
