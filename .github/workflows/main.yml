@@ -37,6 +37,7 @@ jobs:
                   remote_path: /home/docker-compose/discordbot/DooBot/code
 
     deploy:
+        needs: build
         runs-on: ubuntu-latest
 
         steps:
