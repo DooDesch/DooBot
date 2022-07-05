@@ -28,9 +28,9 @@ jobs:
               # uses: wlixcc/SFTP-Deploy-Action@da88a4dbe95286266bbac3c0b2b8284048d20c8f
               uses: wlixcc/SFTP-Deploy-Action@v1.2.4
               with:
-                  username: doobot
-                  server: 185.228.136.64
-                  port: 22
+                  username: ${{ secrets.USERNAME }}
+                  server: ${{ secrets.HOST }}
+                  port: ${{ secrets.PORT }}
                   ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
 
                   local_path: ./*
@@ -44,10 +44,10 @@ jobs:
             - name: Deploy Bot
               uses: appleboy/ssh-action@master
               with:
-                  host: 185.228.136.64
-                  username: doobot
+                  host: ${{ secrets.HOST }}
+                  username: ${{ secrets.USERNAME }}
                   key: ${{ secrets.SSH_PRIVATE_KEY }}
-                  port: 22
+                  port: ${{ secrets.PORT }}
                   script: |
                       cd /home/docker-compose/discordbot/DooBot/code
                       ./init.sh
