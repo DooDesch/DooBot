@@ -37,3 +37,14 @@ jobs:
 
                   local_path: ./*
                   remote_path: /home/docker-compose/discordbot/DooBot/code
+
+            - name: Deploy Bot
+              uses: appleboy/ssh-action@master
+              with:
+                  host: ${{ secrets.HOST }}
+                  username: ${{ secrets.USERNAME }}
+                  key: ${{ secrets.SSH_PRIVATE_KEY }}
+                  port: ${{ secrets.PORT }}
+                  script: |
+                      cd /home/docker-compose/discordbot/DooBot/code
+                      docker-compose build --no-cache && docker-compose up -d
