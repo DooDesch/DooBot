@@ -17,7 +17,7 @@ module.exports = async (client, oldState, newState) => {
     if (!channel) return
 
     // Get the embed message in the voice_states table by guild_id and channel_id
-    let vsMessage = sql
+    let vsMessage = await sql
         .prepare(`SELECT * FROM voice_states WHERE guild_id = ? AND channel_id = ?`)
         .get(newState.guild.id, channel.id)
 
@@ -42,7 +42,7 @@ module.exports = async (client, oldState, newState) => {
     createNewEmbedMessage(client, userVoiceState, channel)
 }
 
-const createNewEmbedMessage = (client, userVoiceState, channel) => {
+const createNewEmbedMessage = async (client, userVoiceState, channel) => {
     const messageTemplate = getEmbedMessageTemplate(client)
 
     const category = userVoiceState.parent
@@ -56,7 +56,7 @@ const createNewEmbedMessage = (client, userVoiceState, channel) => {
     messageTemplate.fields.push(field)
 
     // Create a new embed message
-    return channel.send({ embeds: [messageTemplate] }).then((message) => {
+    return await channel.send({ embeds: [messageTemplate] }).then((message) => {
         // Add the message to the voice_states table
         sql.prepare(
             `INSERT INTO voice_states (guild_id, channel_id, message_id) VALUES (?, ?, ?)`
@@ -93,6 +93,8 @@ const editEmbedMessage = async (client, userVoiceState, message) => {
                 )
                 .random()
 
+            logger.log(`Found user : ${randomUser.user.username}`)
+
             if (randomUser) {
                 // Get the settings for the guild
                 const settings = getSettings(message.guild.id)
@@ -104,6 +106,8 @@ const editEmbedMessage = async (client, userVoiceState, message) => {
                             !roleNameContainsExcludePrefix(role?.name, settings)
                     )
                     .random()
+
+                logger.log(`Found role : ${randomUserRole.name}`)
 
                 if (randomUserRole) {
                     fieldValueText = `Frag doch mal ${memberNicknameMention(
@@ -125,14 +129,16 @@ const editEmbedMessage = async (client, userVoiceState, message) => {
 
     embed.timestamp = new Date()
 
-    message.edit({
+    await message.edit({
         embeds: [embed],
     })
 }
 
-const getEmbedMessageTemplate = (client) => {
+const getEmbedMessageTemplate = async (client) => {
     // Get channel called 'roles'
-    const channel = client.channels.cache.find((channel) => channel.name === 'roles')
+    const channel = await client.channels.cache.find(
+        (channel) => channel.name === 'roles'
+    )
 
     return {
         title: ':speaking_head: User in Voice-Channel',
@@ -149,7 +155,7 @@ const getEmbedMessageTemplate = (client) => {
     }
 }
 
-const editUserInField = (embed, userVoiceState) => {
+const editUserInField = (embed, userVoiceState, removeOnly = false) => {
     const emojis = [':mute:', ':video_camera:']
 
     const wasMuted = userVoiceState.wasMuted || userVoiceState.wasDeafen ? emojis[0] : ''
@@ -168,14 +174,10 @@ const editUserInField = (embed, userVoiceState) => {
                 `${userName}${wasMuted}${wasVideoing}`,
                 `${userName}`
             )
-            field.value = field.value.replace(
-                `${userName}${muted}${video}`,
-                `${userName}`
-            )
         }
     })
 
-    if (!userVoiceState.leftVoice) {
+    if (!userVoiceState.leftVoice && !removeOnly) {
         // Add emojis behind the users mention by replacing the user's mention with the emojis
         embed.fields.forEach((field) => {
             if (field.value.includes(userVoiceState.userId)) {
@@ -191,7 +193,7 @@ const editUserInField = (embed, userVoiceState) => {
 }
 
 const removeUserFromField = (embed, userVoiceState) => {
-    embed = editUserInField(embed, userVoiceState)
+    embed = editUserInField(embed, userVoiceState, true)
 
     const userName = memberNicknameMention(userVoiceState.userId)
 
@@ -241,7 +243,7 @@ const addUserToField = (embed, userVoiceState) => {
         field.value += `\n${memberNicknameMention(userVoiceState.userId)}`
     }
 
-    embed = editUserInField(embed, userVoiceState, true)
+    embed = editUserInField(embed, userVoiceState, false)
 
     return embed
 }
