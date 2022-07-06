@@ -43,7 +43,7 @@ module.exports = async (client, oldState, newState) => {
 }
 
 const createNewEmbedMessage = async (client, userVoiceState, channel) => {
-    const messageTemplate = getEmbedMessageTemplate(client)
+    const messageTemplate = await getEmbedMessageTemplate(client)
 
     const category = userVoiceState.parent
     if (!category.name) return
