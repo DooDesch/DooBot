@@ -89,7 +89,9 @@ const editEmbedMessage = async (client, userVoiceState, message) => {
             const randomUser = await message.guild.members.cache
                 .filter(
                     (member) =>
-                        member?.presence?.status !== 'offline' && !member?.user?.bot
+                        member.presence &&
+                        member.presence.status !== 'offline' &&
+                        !member?.user?.bot
                 )
                 .random()
 
