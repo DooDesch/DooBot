@@ -34,7 +34,7 @@ jobs:
                   ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
 
                   local_path: ./*
-                  remote_path: /home/docker-compose/discordbot/DooBot/code
+                  remote_path: /home/docker-compose/discordbot/DooBot
 
     deploy:
         needs: build
@@ -49,6 +49,6 @@ jobs:
                   key: ${{ secrets.SSH_PRIVATE_KEY }}
                   port: ${{ secrets.PORT }}
                   script: |
-                      cd /home/docker-compose/discordbot/DooBot/code
-                      cp ./config.js.example ./config.js
+                      cd /home/docker-compose/discordbot/DooBot
+                      cp ./code/config.js.example ./code/config.js
                       ./init.sh
