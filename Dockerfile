@@ -2,9 +2,9 @@
 FROM node:16.13.2
 
 WORKDIR /app
-COPY yarn.lock .
-COPY package.json .
-COPY package-lock.json .
+COPY code/yarn.lock .
+COPY code/package.json .
+COPY code/package-lock.json .
 
 RUN npm install
 
