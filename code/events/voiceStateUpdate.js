@@ -39,7 +39,7 @@ module.exports = async (client, oldState, newState) => {
     }
 
     // If no message was found, create a new embed message
-    createNewEmbedMessage(client, userVoiceState, channel)
+    await createNewEmbedMessage(client, userVoiceState, channel)
 }
 
 const createNewEmbedMessage = async (client, userVoiceState, channel) => {
@@ -56,11 +56,13 @@ const createNewEmbedMessage = async (client, userVoiceState, channel) => {
     messageTemplate.fields.push(field)
 
     // Create a new embed message
-    return await channel.send({ embeds: [messageTemplate] }).then((message) => {
+    return await channel.send({ embeds: [messageTemplate] }).then(async (message) => {
         // Add the message to the voice_states table
-        sql.prepare(
-            `INSERT INTO voice_states (guild_id, channel_id, message_id) VALUES (?, ?, ?)`
-        ).run(channel.guild.id, channel.id, message.id)
+        return await sql
+            .prepare(
+                `INSERT INTO voice_states (guild_id, channel_id, message_id) VALUES (?, ?, ?)`
+            )
+            .run(channel.guild.id, channel.id, message.id)
     })
 }
 
@@ -89,9 +91,10 @@ const editEmbedMessage = async (client, userVoiceState, message) => {
             const randomUser = await message.guild.members.cache
                 .filter(
                     (member) =>
+                        !member?.user?.bot &&
                         member.presence &&
                         member.presence.status !== 'offline' &&
-                        !member?.user?.bot
+                        member._roles.length > 0
                 )
                 .random()
 
