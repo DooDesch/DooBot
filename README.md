@@ -19,5 +19,6 @@ I don't think I'll refactor it any time soon though.
 ## How to start
 
 ```
+$ cd code
 $ node index.js
 ```
