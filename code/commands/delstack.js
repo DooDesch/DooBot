@@ -2,6 +2,8 @@ const { Permissions } = require('discord.js')
 const config = require('../config.js')
 const { settings } = require('../modules/settings.js')
 
+const { deleteRoleFromSelectMenu } = require('../modules/roles.js')
+
 // Better SQLite
 const SQLite = require('better-sqlite3')
 const sql = new SQLite('./data/database.sqlite')
@@ -60,14 +62,16 @@ exports.run = async (client, message, args, level) => {
 
     // Get the first channel, called roles, and fetch all messages. Then delete all messages that contain the roleName.
     const rolesChannel = message.guild.channels.cache.find((c) => c.name === 'roles')
-    const messages = await rolesChannel.messages.fetch({ limit: 100 })
-    messages.forEach((m) => {
-        if (m.content.includes(`[${roleName}]`)) {
-            // Delete the message in the reaction_messages table
-            sql.prepare(`DELETE FROM reaction_messages WHERE message_id = ${m.id}`).run()
-            m.delete()
-        }
-    })
+    await deleteRoleFromSelectMenu(rolesChannel)
+
+    // const messages = await rolesChannel.messages.fetch({ limit: 100 })
+    // messages.forEach((m) => {
+    //     if (m.content.includes(`[${roleName}]`)) {
+    //         // Delete the message in the reaction_messages table
+    //         sql.prepare(`DELETE FROM reaction_messages WHERE message_id = ${m.id}`).run()
+    //         m.delete()
+    //     }
+    // })
 
     // Add a final message
     deleteMessages.push(

@@ -1,6 +1,8 @@
 // Better SQLite
+const config = require('../config.js')
+
 const SQLite = require('better-sqlite3')
-const sql = new SQLite('./data/database.sqlite')
+const sql = new SQLite(config.sqliteDatabaseFilePath)
 
 const logger = require('../modules/logger.js')
 const { getSettings } = require('../modules/functions.js')

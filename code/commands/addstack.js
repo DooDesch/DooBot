@@ -1,26 +1,25 @@
 const { Permissions } = require('discord.js')
 const config = require('../config.js')
 const { settings } = require('../modules/settings.js')
+const { addRoleToSelectMenu } = require('../modules/roles.js')
 
 // Better SQLite
 const SQLite = require('better-sqlite3')
-const sql = new SQLite('./data/database.sqlite')
+const sql = new SQLite(config.sqliteDatabaseFilePath)
 
 exports.run = async (client, message, args, level) => {
     // eslint-disable-line no-unused-vars
-    const replying = settings.ensure(
-        message.guild.id,
-        config.defaultSettings
-    ).commandReply
+    const replying = await settings.ensure(message.guild.id, config.defaultSettings)
+        .commandReply
 
     // Check if the user has given a role name
-    if (!args || args.length < 1) return message.reply('Must provide a role name.')
+    if (!args || args.length < 1) return await message.reply('Must provide a role name.')
     const roleName = args[0]
 
     // Check if role name already exists
     const roleExists = message.guild.roles.cache.find((r) => r.name === roleName)
     if (roleExists) {
-        return message.reply('That role does already exist')
+        return await message.reply('That role does already exist')
     }
 
     // Create role and give it to everybody that's mentioned
@@ -43,7 +42,7 @@ exports.run = async (client, message, args, level) => {
     // Check if channel already exists
     const channel = message.guild.channels.cache.find((c) => c.name === roleName)
     if (channel) {
-        return message.reply(
+        return await message.reply(
             'Role category does already exist, skipping creating category and channels'
         )
     }
@@ -78,24 +77,28 @@ exports.run = async (client, message, args, level) => {
         })
 
     // Send a message to the roles channel about the just created role and add a reaction to that message
-    const rolesChannel = message.guild.channels.cache.find((c) => c.name === 'roles')
+    const rolesChannel = await message.guild.channels.cache.find(
+        (c) => c.name === 'roles'
+    )
     if (rolesChannel) {
-        rolesChannel
-            .send(
-                `Channel für [<@&${role.id}>] wurden erstellt. Reagiere auf diese Nachricht, um alles sehen zu können.`
-            )
-            .then((c) => {
-                // Add guild, channel and message to the reaction_messages table
-                sql.prepare(
-                    `INSERT INTO reaction_messages (guild_id, channel_id, message_id) VALUES (?, ?, ?)`
-                ).run(message.guild.id, c.channel.id, c.id)
+        await addRoleToSelectMenu(rolesChannel, role)
 
-                c.react('✅')
-            })
+        // rolesChannel
+        //     .send(
+        //         `Channel für [<@&${role.id}>] wurden erstellt. Reagiere auf diese Nachricht, um alles sehen zu können.`
+        //     )
+        //     .then((c) => {
+        //         // Add guild, channel and message to the reaction_messages table
+        //         sql.prepare(
+        //             `INSERT INTO reaction_messages (guild_id, channel_id, message_id) VALUES (?, ?, ?)`
+        //         ).run(message.guild.id, c.channel.id, c.id)
+
+        //         c.react('✅')
+        //     })
     }
 
     // Add a final message
-    message.reply({
+    await message.reply({
         content: `The role \`${roleName}\` has been created ${
             !channel ? 'and a category with channels has been added' : ''
         }\nYou'll find the reactions in #roles`,
