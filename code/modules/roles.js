@@ -49,6 +49,7 @@ async function createRoleSelectMenu(channel, role) {
     const options = [
         {
             label: `!!- Ausgewählte Rollen löschen -!!`,
+            description: `Wenn ausgewählt, werden alle ausgewählten Rollen gelöscht!`,
             value: 'deleteSelectedRoles',
         },
         {

@@ -120,7 +120,7 @@ async function handleSelectMenu(client, interaction) {
                     })
 
                     await interaction.reply({
-                        content: `Added role(s): ${rolesToGiveString}`,
+                        content: `Rollen hinzugefügt: ${rolesToGiveString}`,
                         ephemeral: true,
                     })
                 }
@@ -136,7 +136,7 @@ async function handleSelectMenu(client, interaction) {
                     })
 
                     await interaction.reply({
-                        content: `Removed role(s): ${roleToRemoveString}`,
+                        content: `Rollen entfernt: ${roleToRemoveString}`,
                         ephemeral: true,
                     })
                 }
