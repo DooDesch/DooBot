@@ -10,8 +10,6 @@ module.exports = async (client, reaction, user) => {
     // You should account for any errors while fetching, it could return API errors if the resource is missing
     if (reaction.message.partial) await reaction.message.fetch()
 
-    // console.log(`${user.username} reacted in channel ${reaction.message.channel.name}`)
-
     // Check if the message is a reaction to a message from the bot
     if (reaction.message.author.id === user.id) return
 

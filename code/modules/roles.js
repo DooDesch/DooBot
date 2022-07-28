@@ -41,8 +41,6 @@ async function checkForRoleSelectMenuInChannel(channel) {
 }
 
 async function createRoleSelectMenu(channel, role) {
-    console.log('Creating role select menu...')
-
     // Get all roles with the color blue
     const guildRoles = channel.guild.roles.cache.filter(
         (r) => r.color === 3447003 && r.id !== role.id
