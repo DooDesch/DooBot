@@ -9,12 +9,12 @@ require('dotenv').config()
 const { Client, Collection } = require('discord.js')
 // We also load the rest of the things we need in this file:
 const { readdirSync } = require('fs')
-const { intents, partials, permLevels } = require('./config.js')
+const { intents, partials, permLevels, sqliteDatabaseFilePath } = require('./config.js')
 const logger = require('./modules/logger.js')
 
 // Better SQLite
 const SQLite = require('better-sqlite3')
-const sql = new SQLite('./data/database.sqlite')
+new SQLite(sqliteDatabaseFilePath)
 
 // This is your client. Some people call it `bot`, some people call it `self`,
 // some might call it `cootchie`. Either way, when you see `client.something`,
@@ -27,7 +27,6 @@ const commands = new Collection()
 const aliases = new Collection()
 const reactionsAdd = new Collection()
 const reactionsRemove = new Collection()
-// const voiceEvents = new Collection()
 const slashcmds = new Collection()
 
 // Generate a cache of client permissions for pretty perm names in commands.
@@ -44,7 +43,6 @@ client.container = {
     aliases,
     reactionsAdd,
     reactionsRemove,
-    // voiceEvents,
     slashcmds,
     levelCache,
 }
@@ -82,15 +80,6 @@ const init = async () => {
         logger.log(`Loading Remove Reaction: ${props.help.name}. 👌`, 'log')
         client.container.reactionsRemove.set(props.help.name, props)
     }
-
-    // const voiceEvents = readdirSync('./event_handler/voice/').filter((file) =>
-    //     file.endsWith('.js')
-    // )
-    // for (const file of voiceEvents) {
-    //     const props = require(`./event_handler/voice/${file}`)
-    //     logger.log(`Loading Voice State Update: ${props.help.name}. 👌`, 'log')
-    //     client.container.voiceEvents.set(props.help.name, props)
-    // }
 
     // Now we load any **slash** commands you may have in the ./slash directory.
     const slashFiles = readdirSync('./slash').filter((file) => file.endsWith('.js'))

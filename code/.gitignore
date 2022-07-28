@@ -6,7 +6,7 @@ yarn-debug.log*
 yarn-error.log*
 config.json
 config.js
-data/
+data/*
 test.js
 
 # SQLite

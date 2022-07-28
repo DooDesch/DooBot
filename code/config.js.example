@@ -45,6 +45,11 @@ const config = {
         excludeRolesWithPrefix: ['[', ']'],
     },
 
+    /*
+     * SqLite Database File
+     */
+    sqliteDatabaseFilePath: './data/database.sqlite',
+
     // PERMISSION LEVEL DEFINITIONS.
 
     permLevels: [
