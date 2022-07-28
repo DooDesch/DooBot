@@ -48,7 +48,7 @@ async function createRoleSelectMenu(channel, role) {
 
     const options = [
         {
-            label: `Ausgewählte Rollen löschen`,
+            label: `!!- Ausgewählte Rollen löschen -!!`,
             value: 'deleteSelectedRoles',
         },
         {
@@ -80,7 +80,7 @@ async function createRoleSelectMenu(channel, role) {
         .setColor(0x0099ff)
         .setTitle('Game-Rollen auswählen')
         .setDescription(
-            'Hier kannst du deine Rollen auswählen.\nWähle eine oder mehrere Rollen aus.\nUm eine Rolle zu löschen, wähle "Ausgewählte Rollen löschen" aus.'
+            'Hier kannst du deine Rollen auswählen.\nWähle eine oder mehrere Rollen aus.\nUm eine Rolle zu löschen, wähle "Ausgewählte Rollen löschen" und anschließend die Rollen aus.'
         )
 
     const message = await channel.send({ embeds: [embed], components: [row] })
@@ -115,11 +115,11 @@ async function updateRoleSelectMenu(channel, role = false) {
 
     // Check all roles in the roleSelectMenu.options array, if the role still exists
     roleSelectMenu.options = roleSelectMenu.options.filter((o) => {
+        if (o.value === 'deleteSelectedRoles') return o
+
         const roleExists = channel.guild.roles.cache.find((r) => r.id === o.value)
 
-        if (roleExists) {
-            return o
-        }
+        if (roleExists) return o
     })
 
     const options = []
