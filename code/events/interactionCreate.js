@@ -150,8 +150,12 @@ async function handleSelectMenu(client, interaction) {
         }
 
         if (!hasChanges) {
+            const contentString = deleteRoles
+                ? 'Du besitzt die ausgewählten Rollen bereits nicht mehr.'
+                : 'Du besitzt die ausgewählten Rollen bereits.'
+
             await interaction.reply({
-                content: `Nothing to change`,
+                content: contentString,
                 ephemeral: true,
             })
         }
