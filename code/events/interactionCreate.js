@@ -89,6 +89,15 @@ async function handleSelectMenu(client, interaction) {
     }
 
     if (interactionData.id === 'roleSelection') {
+        let deleteRoles = interactionData.roles.includes('deleteSelectedRoles')
+
+        // If the user has selected the role with value `deleteSelectedRoles`, remove it from the roles
+        if (deleteRoles) {
+            interactionData.roles = interactionData.roles.filter(
+                (r) => r !== 'deleteSelectedRoles'
+            )
+        }
+
         const roles = await interactionData.roles.map((r) =>
             interaction.guild.roles.cache.get(r)
         )
@@ -96,42 +105,53 @@ async function handleSelectMenu(client, interaction) {
             .get(interaction.user.id)
             .roles.cache.filter((r) => r.color === 3447003)
 
+        let hasChanges = false
+
         try {
-            const rolesToGive = roles.filter((r) => !userRoles.has(r.id))
-            const rolesToGiveString = getRolesString(rolesToGive)
+            if (!deleteRoles) {
+                const rolesToGive = roles.filter((r) => !userRoles.has(r.id))
+                const rolesToGiveString = getRolesString(rolesToGive)
 
-            const roleToRemove = userRoles.filter((r) => !roles.includes(r))
-            const roleToRemoveString = getRolesString(roleToRemove)
+                if (rolesToGiveString.length) {
+                    hasChanges = true
 
-            let followUp = 'reply'
+                    await rolesToGive.forEach(async (r) => {
+                        await giveRoleBySelect(client, interaction, r)
+                    })
 
-            if (rolesToGiveString.length) {
-                await rolesToGive.forEach(async (r) => {
-                    await giveRoleBySelect(client, interaction, r)
-                })
+                    await interaction.reply({
+                        content: `Added role(s): ${rolesToGiveString}`,
+                        ephemeral: true,
+                    })
+                }
+            } else {
+                const roleToRemove = roles.filter((r) => userRoles.has(r.id))
+                const roleToRemoveString = getRolesString(roleToRemove)
 
-                await interaction.reply({
-                    content: `Added role(s): ${rolesToGiveString}`,
-                    ephemeral: true,
-                })
+                if (roleToRemoveString.length) {
+                    hasChanges = true
 
-                followUp = 'followUp'
-            }
+                    await roleToRemove.forEach(async (r) => {
+                        await removeRoleBySelect(client, interaction, r)
+                    })
 
-            if (roleToRemoveString.length) {
-                await roleToRemove.forEach(async (r) => {
-                    await removeRoleBySelect(client, interaction, r)
-                })
-
-                await interaction[followUp]({
-                    content: `Removed role(s): ${roleToRemoveString}`,
-                    ephemeral: true,
-                })
+                    await interaction.reply({
+                        content: `Removed role(s): ${roleToRemoveString}`,
+                        ephemeral: true,
+                    })
+                }
             }
         } catch (error) {
             logger.error(error)
             await interaction?.reply({
                 content: `There was a problem giving/removing roles`,
+                ephemeral: true,
+            })
+        }
+
+        if (!hasChanges) {
+            await interaction.reply({
+                content: `Nothing to change`,
                 ephemeral: true,
             })
         }
