@@ -5,7 +5,7 @@ const SQLite = require('better-sqlite3')
 const sql = new SQLite(config.sqliteDatabaseFilePath)
 const { MessageActionRow, MessageSelectMenu, MessageEmbed } = require('discord.js')
 
-const { roleNameToLabel } = require('../modules/functions')
+const { roleNameToLabel, orderBy } = require('../modules/functions')
 
 async function addRoleToSelectMenu(channel, role) {
     const hasSelectMenu = await checkForRoleSelectMenuInChannel(channel)
@@ -63,13 +63,15 @@ async function createRoleSelectMenu(channel, role) {
         })
     })
 
+    const sortedOptions = orderBy(options, ['label', 'value'])
+
     const row = new MessageActionRow().addComponents(
         new MessageSelectMenu()
             .setCustomId('roleSelection')
             .setPlaceholder('Nichts ausgewählt')
             .setMinValues(1)
             .setMaxValues(options.length)
-            .addOptions(options)
+            .addOptions(sortedOptions)
     )
 
     const embed = new MessageEmbed()
@@ -127,11 +129,13 @@ async function updateRoleSelectMenu(channel, role = false) {
         })
     }
 
+    const sortedOptions = orderBy(options, ['label', 'value'])
+
     // Add the role to the select menu
     const row = new MessageActionRow().addComponents(
         roleSelectMenu
             .setMaxValues(roleSelectMenu.options.length + options.length)
-            .addOptions(options)
+            .addOptions(sortedOptions)
     )
 
     // Update the role select menu message
