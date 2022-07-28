@@ -1,6 +1,6 @@
-// Better SQLite
 const config = require('../config.js')
 
+// Better SQLite
 const SQLite = require('better-sqlite3')
 const sql = new SQLite(config.sqliteDatabaseFilePath)
 

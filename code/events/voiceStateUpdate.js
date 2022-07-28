@@ -1,9 +1,11 @@
 const logger = require('../modules/logger.js')
 const { getSettings } = require('../modules/functions.js')
 
+const config = require('../config.js')
+
 // Better SQLite
 const SQLite = require('better-sqlite3')
-const sql = new SQLite('./data/database.sqlite')
+const sql = new SQLite(config.sqliteDatabaseFilePath)
 
 const { memberNicknameMention, channelMention } = require('@discordjs/builders')
 
