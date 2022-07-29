@@ -81,7 +81,14 @@ async function createRoleSelectMenu(channel, role) {
         .setColor(0x0099ff)
         .setTitle('Game-Rollen auswählen')
         .setDescription(
-            'Hier kannst du deine Rollen auswählen.\nWähle eine oder mehrere Rollen aus.\nUm eine Rolle zu löschen, wähle "Ausgewählte Rollen löschen" und anschließend die Rollen aus.'
+            `Hier kannst du deine Rollen auswählen.
+            \n
+            \n**Mehrere Rollen** können gleichzeitig gewählt werden.
+            \n
+            \n**Löschen von Rollen** ist durch auswählen von "Ausgewählte Rollen löschen" machbar.
+            \n
+            \n**Fehlt eine Rolle**, dann frag gerne im Text-Channel nach.
+            \n`
         )
 
     const message = await channel.send({ embeds: [embed], components: [row] })
