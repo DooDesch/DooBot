@@ -93,12 +93,12 @@ async function createRoleSelectMenu(channel, role = false) {
         .setTitle('Game-Rollen auswählen')
         .setDescription(
             `Hier kannst du deine Rollen auswählen.
-            \n
-            \n**Mehrere Rollen** können gleichzeitig gewählt werden.
-            \n
-            \n**Löschen von Rollen** ist durch auswählen von "Ausgewählte Rollen löschen" machbar.
-            \n
-            \n**Fehlt eine Rolle**, dann frag gerne im Text-Channel nach.
+            
+            **Mehrere Rollen** können gleichzeitig gewählt werden.
+            
+            **Löschen von Rollen** ist durch auswählen von "Ausgewählte Rollen löschen" machbar.
+            
+            **Fehlt eine Rolle**, dann frag gerne im Text-Channel nach.
             \n`
         )
 
