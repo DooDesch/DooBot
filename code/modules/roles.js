@@ -17,6 +17,16 @@ async function addRoleToSelectMenu(channel, role) {
     return await updateRoleSelectMenu(channel, role)
 }
 
+async function createSelectMenuIfItsMissing(channel) {
+    const hasSelectMenu = await checkForRoleSelectMenuInChannel(channel)
+
+    if (!hasSelectMenu) {
+        return await createRoleSelectMenu(channel)
+    }
+
+    return false
+}
+
 async function deleteRoleFromSelectMenu(channel) {
     return await updateRoleSelectMenu(channel)
 }
@@ -40,11 +50,18 @@ async function checkForRoleSelectMenuInChannel(channel) {
     return !!roleSelectMenuMessage
 }
 
-async function createRoleSelectMenu(channel, role) {
+async function createRoleSelectMenu(channel, role = false) {
     // Get all roles with the color blue
     const guildRoles = channel.guild.roles.cache.filter(
         (r) => r.color === 3447003 && r.id !== role.id
     )
+
+    const roleObject = role
+    ? {
+        label: roleNameToLabel(role.name),
+        value: role.id,
+      } 
+    : undefined
 
     const options = [
         {
@@ -52,10 +69,7 @@ async function createRoleSelectMenu(channel, role) {
             description: `Wenn ausgewählt, werden alle ausgewählten Rollen gelöscht!`,
             value: 'deleteSelectedRoles',
         },
-        {
-            label: roleNameToLabel(role.name),
-            value: role.id,
-        },
+        roleObject
     ]
 
     // Add each role into the options array
