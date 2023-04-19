@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 const logger = require('../modules/logger.js')
 const { getSettings } = require('../modules/functions.js')
 
@@ -19,8 +20,8 @@ module.exports = async (client, oldState, newState) => {
     if (!channel) return
 
     // Get the embed message in the voice_states table by guild_id and channel_id
-    let vsMessage = await sql
-        .prepare(`SELECT * FROM voice_states WHERE guild_id = ? AND channel_id = ?`)
+    const vsMessage = await sql
+        .prepare('SELECT * FROM voice_states WHERE guild_id = ? AND channel_id = ?')
         .get(newState.guild.id, channel.id)
 
     // If message was found, edit the embed message
@@ -36,7 +37,7 @@ module.exports = async (client, oldState, newState) => {
             return
         } catch (error) {
             logger.error(error)
-            sql.prepare(`DELETE FROM voice_states WHERE id = ?`).run(vsMessage.id)
+            sql.prepare('DELETE FROM voice_states WHERE id = ?').run(vsMessage.id)
         }
     }
 
@@ -62,7 +63,7 @@ const createNewEmbedMessage = async (client, userVoiceState, channel) => {
         // Add the message to the voice_states table
         return await sql
             .prepare(
-                `INSERT INTO voice_states (guild_id, channel_id, message_id) VALUES (?, ?, ?)`
+                'INSERT INTO voice_states (guild_id, channel_id, message_id) VALUES (?, ?, ?)'
             )
             .run(channel.guild.id, channel.id, message.id)
     })
@@ -127,7 +128,7 @@ const editEmbedMessage = async (client, userVoiceState, message) => {
         }
 
         const field = {
-            name: `:information_source: Zurzeit sind keine User im Voice-Chat`,
+            name: ':information_source: Zurzeit sind keine User im Voice-Chat',
             value: fieldValueText,
             inline: true,
         }
@@ -155,7 +156,7 @@ const getEmbedMessageTemplate = async (client) => {
         color: 39129,
         timestamp: new Date(),
         footer: {
-            text: `Füge dir Rollen hinzu, um Zugriff auf die Channel zu bekommen`,
+            text: 'Füge dir Rollen hinzu, um Zugriff auf die Channel zu bekommen',
             icon_url: '',
         },
         fields: [],
@@ -174,6 +175,7 @@ const editUserInField = (embed, userVoiceState, removeOnly = false) => {
 
     const userName = memberNicknameMention(userVoiceState.userId)
 
+
     // Remove emojis, that are behind the users mention
     embed.fields.forEach((field) => {
         if (field.value.includes(userVoiceState.userId)) {
@@ -181,6 +183,10 @@ const editUserInField = (embed, userVoiceState, removeOnly = false) => {
                 `${userName}${wasMuted}${wasVideoing}`,
                 `${userName}`
             )
+        }
+
+        if (field.value.startsWith(emojis[0])) {
+            field.value = field.value.replace(emojis[0], '')
         }
     })
 
@@ -263,7 +269,7 @@ const getUserVoiceState = (oldState, newState) => {
     // Get user
     const user = newState.member || oldState.member
 
-    const userVoiceState = {
+    return {
         userId: newState.id || oldState.id,
         user: user,
         deaf: newState.selfDeaf || newState.serverDeaf || false,
@@ -286,6 +292,4 @@ const getUserVoiceState = (oldState, newState) => {
         switchedToNewCategory:
             newState.channel?.parent?.id !== oldState.channel?.parent?.id,
     }
-
-    return userVoiceState
 }
