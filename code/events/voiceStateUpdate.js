@@ -185,9 +185,11 @@ const editUserInField = (embed, userVoiceState, removeOnly = false) => {
             )
         }
 
-        if (field.value.startsWith(emojis[0])) {
-            field.value = field.value.replace(emojis[0], '')
-        }
+        emojis.forEach((emoji) => {
+            if (field.value.startsWith(emoji)) {
+                field.value = field.value.replace(emoji, '')
+            }
+        })
     })
 
     if (!userVoiceState.leftVoice && !removeOnly) {
