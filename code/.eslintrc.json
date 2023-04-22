@@ -11,7 +11,7 @@
     "no-console": "off",
     "indent": [
       "error",
-      2,
+      4,
       {
         "SwitchCase": 1
       }
@@ -22,34 +22,38 @@
     ],
     "quotes": [
       "warn",
-      "double"
+      "single"
     ],
     "semi": [
       "warn",
-      "always"
+      "never"
     ],
     "keyword-spacing": [
-      "error", {
+      "error",
+      {
         "before": true,
         "after": true
       }
     ],
     "space-before-blocks": [
-      "error", {
-        "functions":"always",
+      "error",
+      {
+        "functions": "always",
         "keywords": "always",
         "classes": "always"
       }
     ],
     "space-before-function-paren": [
-      "error", {
+      "error",
+      {
         "anonymous": "never",
         "named": "never",
         "asyncArrow": "always"
       }
     ],
     "prefer-const": [
-      "error", {
+      "error",
+      {
         "destructuring": "any",
         "ignoreReadBeforeAssign": false
       }
