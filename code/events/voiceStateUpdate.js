@@ -13,9 +13,9 @@ const { memberNicknameMention, channelMention } = require('@discordjs/builders')
 module.exports = async (client, oldState, newState) => {
     const userVoiceState = getUserVoiceState(oldState, newState)
 
-    // Find channel called "wo-wer-was" and send a message to it
+    // Find channel called "wer-wo-was" and send a message to it
     const channel = newState.guild.channels.cache.find(
-        (channel) => channel.name === 'wo-wer-was'
+        (channel) => channel.name === 'wer-wo-was'
     )
     if (!channel) return
 
