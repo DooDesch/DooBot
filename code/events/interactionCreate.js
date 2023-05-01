@@ -45,9 +45,7 @@ async function handleCommand(client, interaction) {
     try {
         await cmd.run(client, interaction)
         logger.log(
-            `${config.permLevels.find((l) => l.level === level).name} ${
-                interaction.user.id
-            } ran slash command ${interaction.commandName}`,
+            `${config.permLevels.find((l) => l.level === level).name} ${interaction.user.id} ran slash command ${interaction.commandName}`,
             'cmd'
         )
     } catch (e) {
@@ -89,7 +87,7 @@ async function handleSelectMenu(client, interaction) {
     }
 
     if (interactionData.id === 'roleSelection') {
-        let deleteRoles = interactionData.roles.includes('deleteSelectedRoles')
+        const deleteRoles = interactionData.roles.includes('deleteSelectedRoles')
 
         // If the user has selected the role with value `deleteSelectedRoles`, remove it from the roles
         if (deleteRoles) {
@@ -144,7 +142,7 @@ async function handleSelectMenu(client, interaction) {
         } catch (error) {
             logger.error(error)
             await interaction?.reply({
-                content: `There was a problem giving/removing roles`,
+                content: 'There was a problem giving/removing roles',
                 ephemeral: true,
             })
         }
